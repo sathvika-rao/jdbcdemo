@@ -46,7 +46,7 @@ public class JDBCApplication {
 		
 		AccountService accountService = AccountServiceImpl.getInstance();
 		
-		
+		System.out.println("Testing git push");
 		while(true) {
 			System.out.println("Enter your choice");
 			String str = sc.nextLine();
