@@ -9,32 +9,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.dnb.jdbcdemo.dto.Account;
 import com.dnb.jdbcdemo.utils.DBUtils;
 
+@Repository
 //it should have only one instance - so work with singleton design pattern
 public class AccountRepositoryImpl implements AccountRepository {
 
-	private AccountRepositoryImpl() {
-		// TODO Auto-generated constructor stub
-	}
-
-	// reference of the interface can be taken, just its instance cannot be created
-	private static AccountRepository accountRepository;
-
-	public static AccountRepository getInstance() {
-		synchronized (AccountRepositoryImpl.class) {
-			if (accountRepository == null) {
-				accountRepository = new AccountRepositoryImpl();
-			}
-			return accountRepository;
-		}
-	}
-
+	@Autowired
+	private DBUtils dbUtils;
+	
 	@Override
 	public Account createAccount(Account account) {
 		// TODO Auto-generated method stub
-		Optional<Connection> connection = DBUtils.getConnection();
+		Optional<Connection> connection = dbUtils.getConnection();
 		String createAccountStatement = "insert into account "
 				+ "(accountId, accountHolderName, accountType, balance, contactNumber, address, accountCreatedDate, dob, accountStatus)"
 				+ "values (?,?,?,?,?,?,?,?,?)";
@@ -64,7 +55,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 				e.printStackTrace();
 			} finally {
 				if (connection.isPresent()) {
-					DBUtils.closeConnection(connection.get());
+					dbUtils.closeConnection(connection.get());
 				}
 			}
 		}
@@ -74,7 +65,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 	@Override
 	public Optional<Account> getAccountById(String accountId) {
 		// TODO Auto-generated method stub
-		Optional<Connection> connection = DBUtils.getConnection();
+		Optional<Connection> connection = dbUtils.getConnection();
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 		
@@ -104,7 +95,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 				}
 				finally {
 					if(connection.isPresent()) {
-						DBUtils.closeConnection(connection.get());
+						dbUtils.closeConnection(connection.get());
 					}
 				}
 				
@@ -116,7 +107,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 	@Override
 	public Optional<Account> deleteAccountById(String accountId) {
 		// TODO Auto-generated method stub
-		Optional<Connection> connection = DBUtils.getConnection();
+		Optional<Connection> connection = dbUtils.getConnection();
 		PreparedStatement preparedStatement = null;
 		
 		String query = "delete from account where accountId=?";
@@ -132,7 +123,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 				}
 				finally {
 					if(connection.isPresent()) {
-						DBUtils.closeConnection(connection.get());
+						dbUtils.closeConnection(connection.get());
 					}
 				}
 				
@@ -143,12 +134,12 @@ public class AccountRepositoryImpl implements AccountRepository {
 	@Override
 	public List<Account> getAllAccounts() {
 		// TODO Auto-generated method stub
-		Optional<Connection> connection = DBUtils.getConnection();
+		Optional<Connection> connection = dbUtils.getConnection();
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 		List<Account> accounts = new ArrayList<Account>();
 		
-		String query = "select * from account where accountId=?";
+		String query = "select * from account";
 		
 		if(connection.isPresent()) {
 				try {
@@ -174,7 +165,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 				}
 				finally {
 					if(connection.isPresent()) {
-						DBUtils.closeConnection(connection.get());
+						dbUtils.closeConnection(connection.get());
 					}
 				}
 				

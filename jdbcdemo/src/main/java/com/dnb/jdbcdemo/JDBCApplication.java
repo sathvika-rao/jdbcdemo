@@ -7,10 +7,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Scanner;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.dnb.jdbcdemo.config.Config;
 import com.dnb.jdbcdemo.dto.Account;
 import com.dnb.jdbcdemo.repo.AccountRepositoryImpl;
 import com.dnb.jdbcdemo.service.AccountService;
 import com.dnb.jdbcdemo.service.AccountServiceImpl;
+import com.dnb.jdbcdemo.utils.DataSourceBean;
+import com.test.DBConfig;
 
 public class JDBCApplication {
 
@@ -44,7 +50,14 @@ public class JDBCApplication {
 		account.setDob(ld);
 		account.setAccountStatus(true);
 		
-		AccountService accountService = AccountServiceImpl.getInstance();
+		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(Config.class);
+		
+		//DataSourceBean dataSourceBean = applicationContext.getBean(DataSourceBean.class);
+		//DataSourceBean dataSourceBean = applicationContext.getBean("getDataSourceBean",DataSourceBean.class);
+		DataSourceBean dataSourceBean = applicationContext.getBean("dataSourceBean",DataSourceBean.class);
+		System.out.println("hello");
+		System.out.println(dataSourceBean!=null);
+		AccountService accountService = (AccountService) applicationContext.getBean("accountServiceImpl");
 		
 		System.out.println("Testing git push");
 		while(true) {
